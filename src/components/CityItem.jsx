@@ -1,25 +1,21 @@
-/* eslint-disable no-unused-vars */
-//import styles from "./cityItem.module.css";
 import { useCities } from "../contexts/CitiesContext";
 import styles from "./cityItem.module.css";
 import { Link } from "react-router-dom";
+const formatDate = (date) =>
+  new Intl.DateTimeFormat("en", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    weekday: "long",
+  }).format(new Date(date * 1000));
 export default function cityItem({ city }) {
   const {
     emoji,
-    cityName,
+    name,
     date,
     id,
-    position: { lat, lng },
+    position: { lat, lon },
   } = city;
-  const formatDate = (date) =>
-    new Intl.DateTimeFormat("en", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-      weekday: "long",
-    }).format(new Date(date));
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const { currentCity, deleteCity } = useCities();
   function deleteHandler(e) {
     e.preventDefault();
@@ -29,13 +25,13 @@ export default function cityItem({ city }) {
     <li>
       <Link
         className={`${styles.cityItem} ${
-          currentCity.id == id ? styles["cityItem--active"] : ""
+          currentCity?.id == id ? styles["cityItem--active"] : ""
         }`}
-        to={`${id}?lat=${lat}&lng=${lng}`}
+        to={`${id}?lat=${lat}&lon=${lon}`}
       >
-        <span className={styles.emoji}>{emoji}</span>
-        <span className={styles.name}>{cityName}</span>
-        <span className={styles.date}>{formatDate(date)}</span>
+        <img src={emoji} alt={`${name} flag`} />
+        <span className={styles.name}>{name}</span>
+        <span className={styles.date}>{formatDate(date.seconds)}</span>
         <span className={styles.deleteBtn} onClick={deleteHandler}>
           ❌
         </span>

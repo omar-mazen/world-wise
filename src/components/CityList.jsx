@@ -12,7 +12,7 @@ export default function CityList() {
         <Spinner />
       ) : cities.length > 0 ? (
         <ul className={styles.cityList}>
-          {cities.map((city) => (
+          {cities?.map((city) => (
             <CityItem city={city} key={`${city.id}-${city.cityName}`} />
           ))}
         </ul>

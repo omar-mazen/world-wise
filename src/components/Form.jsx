@@ -10,14 +10,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useCities } from "../contexts/CitiesContext";
 import { useNavigate } from "react-router-dom";
 
-export function convertToEmoji(countryCode) {
-  const codePoints = countryCode
-    .toUpperCase()
-    .split("")
-    .map((char) => 127397 + char.charCodeAt());
-  return String.fromCodePoint(...codePoints);
-}
-
 function Form() {
   const [cityName, setCityName] = useState("");
   const [isGeoLoading, setIsGeoLoading] = useState(false);
@@ -25,7 +17,7 @@ function Form() {
   const [date, setDate] = useState(new Date());
   const [notes, setNotes] = useState("");
   const [emoji, setEmoji] = useState();
-  const [lat, lng] = useUrlPosition();
+  const [lat, lon] = useUrlPosition();
   const [error, setError] = useState();
   const { createCity } = useCities();
   const navigate = useNavigate();
@@ -36,7 +28,7 @@ function Form() {
           setError("");
           setIsGeoLoading(true);
           const res = await fetch(
-            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}`
+            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}`
           );
           const cities = await res.json();
           if (!cities.countryCode)
@@ -44,7 +36,9 @@ function Form() {
               "That dosn't seem to be a city. Click somewhere else"
             );
           setCityName(cities.city || cities.loacality || "");
-          setEmoji(convertToEmoji(cities.countryCode));
+          setEmoji(
+            `https://flagcdn.com/w40/${cities.countryCode.toLowerCase()}.png`
+          );
         } catch (err) {
           setError(err.message);
         } finally {
@@ -53,20 +47,20 @@ function Form() {
       }
       fetchCity();
     },
-    [lat, lng]
+    [lat, lon]
   );
-  function addHandle(e) {
+  async function addHandle(e) {
     e.preventDefault();
-    if (!(lat && lng)) return;
-    createCity({
-      cityName,
+    if (!(lat && lon)) return;
+    await createCity({
+      name: cityName,
       country,
       emoji,
       date,
-      notes,
+      note: notes,
       position: {
         lat,
-        lng,
+        lon,
       },
     });
     navigate("/app/cities");
@@ -77,12 +71,14 @@ function Form() {
     <form className={styles.form}>
       <div className={styles.row}>
         <label htmlFor="cityName">City name</label>
-        <input
-          id="cityName"
-          onChange={(e) => setCityName(e.target.value)}
-          value={cityName}
-        />
-        <span className={styles.flag}>{emoji}</span>
+        <div className={styles.row}>
+          <input
+            id="cityName"
+            onChange={(e) => setCityName(e.target.value)}
+            value={cityName}
+          />
+          <img className={styles.flag} src={emoji} alt={`${country} flag`} />
+        </div>
       </div>
 
       <div className={styles.row}>

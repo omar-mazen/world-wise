@@ -4,14 +4,15 @@ import styles from "./Login.module.css";
 import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import Button from "../components/Button";
-export default function Login() {
-  const [email, setEmail] = useState("test@test.com");
-  const [password, setPassword] = useState("Test123!");
+export default function Signup() {
+  const [email, setEmail] = useState("");
+  const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { signin, isAuthenticaed } = useAuth();
+  const { signup, isAuthenticaed } = useAuth();
   function submitHandle(e) {
     e.preventDefault();
-    if (email && password) signin(email, password);
+    if (email && userName && password) signup(userName, email, password);
   }
   useEffect(
     function () {
@@ -33,6 +34,16 @@ export default function Login() {
             value={email}
           />
         </div>
+        <div className={styles.row}>
+          <label htmlFor="text">User name</label>
+          <input
+            required
+            type="text"
+            id="text"
+            onChange={(e) => setUserName(e.target.value)}
+            value={userName}
+          />
+        </div>
 
         <div className={styles.row}>
           <label htmlFor="password">Password</label>
@@ -50,23 +61,23 @@ export default function Login() {
             type={"primary"}
             cssStyle={{ width: "100%", display: "block" }}
           >
-            login
+            signup
           </Button>
-          <p style={{ marginTop: "10px", fontSize: "1.4rem" }}>
-            don't have account?
-            <Link to="/signup">
-              <span
-                style={{
-                  color: "var(--color-brand--2)",
-                  marginLeft: "5px",
-                  cursor: "pointer",
-                }}
-              >
-                signup →
-              </span>
-            </Link>
-          </p>
         </div>
+        <p style={{ fontSize: "1.4rem" }}>
+          Already have an account?
+          <Link to={"/login"}>
+            <span
+              style={{
+                color: "var(--color-brand--2)",
+                marginLeft: "5px",
+                cursor: "pointer",
+              }}
+            >
+              login →
+            </span>
+          </Link>
+        </p>
       </form>
     </main>
   );

@@ -67,3 +67,12 @@ input:focus {
   padding: 1rem 3rem;
   border-radius: 5px;
 }
+
+:disabled {
+  opacity: 50%;
+  cursor: not-allowed;
+}
+
+a {
+  text-decoration: none;
+}
