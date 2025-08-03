@@ -31,7 +31,7 @@ function CitiesProvider({ children }) {
     );
 
     return () => unsubscribe();
-  }, []);
+  }, [isAuthenticaed]);
 
   async function getCity(id) {
     setIsLoading(true);
